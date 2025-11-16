@@ -1,5 +1,12 @@
 import React, { useRef, useState } from "react";
-import { View, FlatList, StyleSheet, TouchableOpacity, Text, Dimensions } from "react-native";
+import {
+  View,
+  FlatList,
+  StyleSheet,
+  TouchableOpacity,
+  Text,
+  Dimensions,
+} from "react-native";
 import { useRouter } from "expo-router";
 import { useTheme } from "../../constants/theme";
 import { Ionicons } from "@expo/vector-icons";
@@ -36,12 +43,46 @@ export default function Onboarding() {
       flatRef.current?.scrollToIndex({ index: index + 1 });
       setIndex(index + 1);
     } else {
-      router.replace("/(drawer)/about");
+      router.replace("(drawer)");
+    }
+  };
+
+  const goBack = () => {
+    if (index > 0) {
+      flatRef.current?.scrollToIndex({ index: index - 1 });
+      setIndex(index - 1);
     }
   };
 
   return (
     <View style={[styles.container, { backgroundColor: theme.background }]}>
+
+      {/* TOP NAV - Back + Skip */}
+      <View style={styles.topNav}>
+        {/* Back */}
+        {index > 0 ? (
+          <TouchableOpacity onPress={goBack}>
+            <Text style={[styles.topBtn, { color: theme.textSecondary }]}>
+              Back
+            </Text>
+          </TouchableOpacity>
+        ) : (
+          <View style={{ width: 50 }} /> // placeholder يظبط المحاذاة
+        )}
+
+        {/* Skip */}
+        {index < screens.length - 1 ? (
+          <TouchableOpacity onPress={() => router.replace("(drawer)")}>
+            <Text style={[styles.topBtn, { color: theme.textSecondary }]}>
+              Skip
+            </Text>
+          </TouchableOpacity>
+        ) : (
+          <View style={{ width: 50 }} />
+        )}
+      </View>
+
+      {/* MAIN CONTENT */}
       <FlatList
         ref={flatRef}
         data={screens}
@@ -51,8 +92,12 @@ export default function Onboarding() {
         renderItem={({ item }) => (
           <View style={[styles.page, { width }]}>
             <Ionicons name={item.icon} size={80} color={theme.primary} />
-            <Text style={[styles.title, { color: theme.text }]}>{item.title}</Text>
-            <Text style={[styles.desc, { color: theme.textSecondary }]}>{item.desc}</Text>
+            <Text style={[styles.title, { color: theme.text }]}>
+              {item.title}
+            </Text>
+            <Text style={[styles.desc, { color: theme.textSecondary }]}>
+              {item.desc}
+            </Text>
           </View>
         )}
         onMomentumScrollEnd={(e) => {
@@ -61,7 +106,7 @@ export default function Onboarding() {
         }}
       />
 
-      {/* Dots */}
+      {/* DOTS */}
       <View style={styles.dotsContainer}>
         {screens.map((_, i) => (
           <View
@@ -77,32 +122,63 @@ export default function Onboarding() {
         ))}
       </View>
 
-      {/* Next Button */}
-      <TouchableOpacity style={[styles.btn, { backgroundColor: theme.primary }]} onPress={goNext}>
-        <Text style={styles.btnText}>{index === screens.length - 1 ? "Done" : "Next"}</Text>
-      </TouchableOpacity>
-
-      {/* Skip */}
-      <TouchableOpacity onPress={() => router.replace("/(drawer)/about")}>
-        <Text style={[styles.skip, { color: theme.textSecondary }]}>Skip</Text>
+      {/* NEXT / DONE */}
+      <TouchableOpacity
+        style={[styles.btn, { backgroundColor: theme.primary }]}
+        onPress={goNext}
+      >
+        <Text style={styles.btnText}>
+          {index === screens.length - 1 ? "Done" : "Next"}
+        </Text>
       </TouchableOpacity>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, justifyContent: "center" },
+  container: { flex: 1 },
+
+  topNav: {
+    position: "absolute",
+    top: 50,
+    left: 0,
+    right: 0,
+    paddingHorizontal: 24,
+    flexDirection: "row",
+    justifyContent: "space-between",
+    zIndex: 100,
+  },
+
+  topBtn: {
+    fontSize: 16,
+    fontWeight: "500",
+  },
+
   page: {
-  flex: 1,
-  justifyContent: "center",
-  alignItems: "center",
-  paddingHorizontal: 30,
-},
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    paddingHorizontal: 30,
+  },
+
   title: { fontSize: 24, fontWeight: "700", marginTop: 20 },
   desc: { fontSize: 14, marginTop: 10, textAlign: "center" },
-  dotsContainer: { flexDirection: "row", justifyContent: "center", marginVertical: 20 },
+
+  dotsContainer: {
+    flexDirection: "row",
+    justifyContent: "center",
+    marginBottom: 20,
+  },
+
   dot: { height: 8, borderRadius: 5, marginHorizontal: 4 },
-  btn: { padding: 15, marginHorizontal: 20, borderRadius: 10, alignItems: "center" },
+
+  btn: {
+    padding: 15,
+    marginHorizontal: 20,
+    borderRadius: 12,
+    alignItems: "center",
+    marginBottom: 30,
+  },
+
   btnText: { color: "white", fontWeight: "600", fontSize: 16 },
-  skip: { textAlign: "center", marginTop: 10, fontSize: 14 },
 });

@@ -5,8 +5,9 @@ import { useColorScheme } from 'react-native';
 
 
 export const unstable_settings = {
-  initialRouteName: "(onboarding)", 
+  initialRouteName: "(onboarding)",
 };
+
 
 export default function RootLayout() {
   const colorScheme = useColorScheme();

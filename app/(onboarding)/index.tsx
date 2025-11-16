@@ -1,25 +1,42 @@
 import React, { useRef, useState } from "react";
-import { View, FlatList, StyleSheet, TouchableOpacity, Text } from "react-native";
+import { View, FlatList, StyleSheet, TouchableOpacity, Text, Dimensions } from "react-native";
 import { useRouter } from "expo-router";
 import { useTheme } from "../../constants/theme";
+import { Ionicons } from "@expo/vector-icons";
 
-import Screen1 from "./screen1";
-import Screen2 from "./screen2";
-import Screen3 from "./screen3";
+const { width } = Dimensions.get("window");
 
 export default function Onboarding() {
   const router = useRouter();
   const theme = useTheme();
-  const flatRef = useRef<FlatList>(null);
 
-  const screens = [<Screen1 />, <Screen2 />, <Screen3 />];
+  const screens = [
+    {
+      title: "Add Event Details",
+      desc: "Easily add and customize your event details.",
+      icon: "calendar-outline",
+    },
+    {
+      title: "Share Your QR",
+      desc: "Generate a QR code and share it.",
+      icon: "qr-code-outline",
+    },
+    {
+      title: "Enjoy & Feedback",
+      desc: "Let guests scan the QR and react instantly.",
+      icon: "chatbubble-ellipses-outline",
+    },
+  ];
+
+  const flatRef = useRef<FlatList>(null);
   const [index, setIndex] = useState(0);
 
   const goNext = () => {
     if (index < screens.length - 1) {
       flatRef.current?.scrollToIndex({ index: index + 1 });
+      setIndex(index + 1);
     } else {
-      router.replace("(drawer)");
+      router.replace("/(drawer)/about");
     }
   };
 
@@ -31,16 +48,17 @@ export default function Onboarding() {
         horizontal
         pagingEnabled
         showsHorizontalScrollIndicator={false}
-        onScroll={(e) => {
-          const slideIndex = Math.round(
-            e.nativeEvent.contentOffset.x /
-              e.nativeEvent.layoutMeasurement.width
-          );
-          setIndex(slideIndex);
-        }}
         renderItem={({ item }) => (
-          <View style={{ width: "100%" }}>{item}</View>
+          <View style={[styles.page, { width }]}>
+            <Ionicons name={item.icon} size={80} color={theme.primary} />
+            <Text style={[styles.title, { color: theme.text }]}>{item.title}</Text>
+            <Text style={[styles.desc, { color: theme.textSecondary }]}>{item.desc}</Text>
+          </View>
         )}
+        onMomentumScrollEnd={(e) => {
+          const newIndex = Math.round(e.nativeEvent.contentOffset.x / width);
+          setIndex(newIndex);
+        }}
       />
 
       {/* Dots */}
@@ -50,57 +68,41 @@ export default function Onboarding() {
             key={i}
             style={[
               styles.dot,
-              { backgroundColor: i === index ? theme.primary : "#ccc" },
+              {
+                backgroundColor: index === i ? theme.primary : theme.textSecondary,
+                width: index === i ? 22 : 8,
+              },
             ]}
           />
         ))}
       </View>
 
-      {/* Buttons */}
-      <TouchableOpacity
-        style={[styles.nextButton, { backgroundColor: theme.primary }]}
-        onPress={goNext}
-      >
-        <Text style={styles.nextText}>
-          {index === screens.length - 1 ? "Done" : "Next"}
-        </Text>
+      {/* Next Button */}
+      <TouchableOpacity style={[styles.btn, { backgroundColor: theme.primary }]} onPress={goNext}>
+        <Text style={styles.btnText}>{index === screens.length - 1 ? "Done" : "Next"}</Text>
       </TouchableOpacity>
 
-      <TouchableOpacity onPress={() => router.replace("(drawer)")}>
-        <Text style={[styles.skip, { color: theme.primary }]}>Skip</Text>
+      {/* Skip */}
+      <TouchableOpacity onPress={() => router.replace("/(drawer)/about")}>
+        <Text style={[styles.skip, { color: theme.textSecondary }]}>Skip</Text>
       </TouchableOpacity>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1 },
-  dotsContainer: {
-    flexDirection: "row",
-    justifyContent: "center",
-    marginBottom: 15,
-  },
-  dot: {
-    width: 10,
-    height: 10,
-    borderRadius: 5,
-    marginHorizontal: 6,
-  },
-  nextButton: {
-    padding: 16,
-    marginHorizontal: 24,
-    borderRadius: 10,
-    alignItems: "center",
-  },
-  nextText: {
-    color: "#fff",
-    fontWeight: "700",
-    fontSize: 16,
-  },
-  skip: {
-    textAlign: "center",
-    marginTop: 10,
-    fontSize: 14,
-    fontWeight: "500",
-  },
+  container: { flex: 1, justifyContent: "center" },
+  page: {
+  flex: 1,
+  justifyContent: "center",
+  alignItems: "center",
+  paddingHorizontal: 30,
+},
+  title: { fontSize: 24, fontWeight: "700", marginTop: 20 },
+  desc: { fontSize: 14, marginTop: 10, textAlign: "center" },
+  dotsContainer: { flexDirection: "row", justifyContent: "center", marginVertical: 20 },
+  dot: { height: 8, borderRadius: 5, marginHorizontal: 4 },
+  btn: { padding: 15, marginHorizontal: 20, borderRadius: 10, alignItems: "center" },
+  btnText: { color: "white", fontWeight: "600", fontSize: 16 },
+  skip: { textAlign: "center", marginTop: 10, fontSize: 14 },
 });

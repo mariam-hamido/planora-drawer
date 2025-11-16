@@ -43,7 +43,7 @@ export default function Onboarding() {
       flatRef.current?.scrollToIndex({ index: index + 1 });
       setIndex(index + 1);
     } else {
-      router.replace("(drawer)");
+      router.replace("/(drawer)/about");
     }
   };
 
@@ -72,7 +72,7 @@ export default function Onboarding() {
 
         {/* Skip */}
         {index < screens.length - 1 ? (
-          <TouchableOpacity onPress={() => router.replace("(drawer)")}>
+          <TouchableOpacity onPress={() => router.replace("/(drawer)/about")}>
             <Text style={[styles.topBtn, { color: theme.textSecondary }]}>
               Skip
             </Text>

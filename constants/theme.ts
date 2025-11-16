@@ -1,48 +1,63 @@
+import { Platform, useColorScheme } from "react-native";
+
 /**
- * Below are the colors that are used in the app. The colors are defined in the light and dark mode.
- * There are many other ways to style your app. For example, [Nativewind](https://www.nativewind.dev/), [Tamagui](https://tamagui.dev/), [unistyles](https://reactnativeunistyles.vercel.app), etc.
+ * Colors used in the app — Light & Dark modes
  */
-
-import { Platform } from 'react-native';
-
-const tintColorLight = '#0a7ea4';
-const tintColorDark = '#fff';
-
 export const Colors = {
   light: {
-    text: '#11181C',
-    background: '#fff',
-    tint: tintColorLight,
-    icon: '#687076',
-    tabIconDefault: '#687076',
-    tabIconSelected: tintColorLight,
+    text: "#330C2F",
+    subText: "#8A817C",
+
+    background: "#FBF7F4",
+    card: "#FFFFFF",
+
+    primary: "#FFA704",      // Orange
+    secondary: "#FFFFFF",    // Text on orange
+
+    accent: "#7E2A8D",       // Purple background / tint
+
+    icon: "#330C2F",
+    tint: "#7E2A8D",
+
+    tabIconDefault: "#8A817C",
+    tabIconSelected: "#FFA704",
   },
+
   dark: {
-    text: '#ECEDEE',
-    background: '#151718',
-    tint: tintColorDark,
-    icon: '#9BA1A6',
-    tabIconDefault: '#9BA1A6',
-    tabIconSelected: tintColorDark,
+    text: "#ECEDEE",
+    subText: "#B8B4B2",
+
+    background: "#151718",
+    card: "#1F1F1F",
+
+    primary: "#FFA704",       // Keep the orange in dark mode also
+    secondary: "#151718",
+
+    accent: "#C77DFF",        // Light purple for dark mode
+
+    icon: "#ECEDEE",
+    tint: "#C77DFF",
+
+    tabIconDefault: "#9BA1A6",
+    tabIconSelected: "#FFA704",
   },
 };
 
+/**
+ * Fonts selection
+ */
 export const Fonts = Platform.select({
   ios: {
-    /** iOS `UIFontDescriptorSystemDesignDefault` */
-    sans: 'system-ui',
-    /** iOS `UIFontDescriptorSystemDesignSerif` */
-    serif: 'ui-serif',
-    /** iOS `UIFontDescriptorSystemDesignRounded` */
-    rounded: 'ui-rounded',
-    /** iOS `UIFontDescriptorSystemDesignMonospaced` */
-    mono: 'ui-monospace',
+    sans: "system-ui",
+    serif: "ui-serif",
+    rounded: "ui-rounded",
+    mono: "ui-monospace",
   },
   default: {
-    sans: 'normal',
-    serif: 'serif',
-    rounded: 'normal',
-    mono: 'monospace',
+    sans: "normal",
+    serif: "serif",
+    rounded: "normal",
+    mono: "monospace",
   },
   web: {
     sans: "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif",
@@ -51,3 +66,11 @@ export const Fonts = Platform.select({
     mono: "SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace",
   },
 });
+
+/**
+ * useTheme() — Returns colors based on light/dark mode
+ */
+export const useTheme = () => {
+  const mode = useColorScheme(); // "light" | "dark"
+  return Colors[mode || "light"];
+};
